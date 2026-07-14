@@ -62,14 +62,53 @@ function bindEvents() {
 }
 
 async function login() {
-  clearMessage("loginMessage");
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const message = document.getElementById("loginMessage");
+  const button = document.getElementById("loginButton");
+
+  message.textContent = "";
+  message.className = "message";
 
   if (!email || !password) {
-    showMessage("loginMessage", "Enter your email and password.", true);
+    message.textContent = "Please enter your email and password.";
+    message.className = "message error";
     return;
   }
+
+  button.disabled = true;
+  button.textContent = "Signing In...";
+
+  try {
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data.user) {
+      throw new Error("Login succeeded, but no user was returned.");
+    }
+
+    await loadApplication(data.user);
+
+  } catch (error) {
+    console.error("Login error:", error);
+
+    message.textContent =
+      error.message || "Unable to sign in.";
+
+    message.className = "message error";
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+}
 
   toggleButton("loginButton", true, "Signing In...");
 
