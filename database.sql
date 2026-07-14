@@ -270,3 +270,24 @@ grant select on public.monthly_penalty_summary to authenticated;
 
 -- Check the monthly penalty:
 -- select * from public.monthly_penalty_summary order by penalty_month desc;
+
+
+-- =========================================================
+-- CREATE OR REPAIR PJ ADMIN PROFILE
+-- Run after the user exists in Authentication > Users.
+-- =========================================================
+insert into public.profiles (id, email, full_name, role, active)
+select id, email, 'PJ Karaffa', 'admin', true
+from auth.users
+where lower(email) = lower('pkaraffa@bridgeportedu.net')
+on conflict (id) do update set
+  email = excluded.email,
+  full_name = excluded.full_name,
+  role = 'admin',
+  active = true;
+
+select au.id, au.email as auth_email, p.email as profile_email,
+       p.full_name, p.role, p.school_id, p.active
+from auth.users au
+left join public.profiles p on p.id = au.id
+where lower(au.email) = lower('pkaraffa@bridgeportedu.net');

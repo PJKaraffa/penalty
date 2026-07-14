@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transportation Penalty Tracker</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <div id="loginPage" class="login-page">
@@ -19,7 +19,7 @@
       <label for="loginPassword">Password</label>
       <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password">
 
-      <button id="loginButton" class="primary full-width">Sign In</button>
+      <button id="loginButton" type="button" class="primary full-width" onclick="login()">Sign In</button>
       <p id="loginMessage" class="message"></p>
     </div>
   </div>
@@ -263,9 +263,9 @@
       </section>
     </main>
   </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
-<script src="script.js"></script>
-  
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=2"></script>
+  <script src="script.js?v=2"></script>
 </body>
 </html>
