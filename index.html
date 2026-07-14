@@ -5,753 +5,517 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transportation Penalty Tracker</title>
   <style>
-:root {
-  --navy: #12355b;
-  --blue: #1f6fb2;
-  --blue-dark: #15558a;
-  --light-blue: #eaf4ff;
-  --background: #f4f7fb;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #64748b;
-  --border: #d9e2ec;
-  --danger: #b42318;
-  --success: #16794a;
-  --shadow: 0 10px 28px rgba(18, 53, 91, 0.10);
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--background);
-  color: var(--text);
-}
-
-.hidden { display: none !important; }
-
-button, input, select, textarea { font: inherit; }
-
-button {
-  border: 0;
-  border-radius: 8px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-button:disabled { opacity: .55; cursor: not-allowed; }
-
-.primary { background: var(--blue); color: #fff; }
-.primary:hover { background: var(--blue-dark); }
-.secondary { background: #e8eef5; color: var(--navy); }
-.danger-outline { background: #fff; color: var(--danger); border: 1px solid #e5a6a1; }
-.small-button { padding: 6px 10px; font-size: 12px; }
-.edit-button { background: #eaf4ff; color: var(--blue-dark); }
-.delete-button { background: #fff0ef; color: var(--danger); }
-.full-width { width: 100%; }
-
-.login-page {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background:
-    linear-gradient(135deg, rgba(18,53,91,.96), rgba(31,111,178,.90)),
-    radial-gradient(circle at top right, #ffffff 0, transparent 35%);
-}
-
-.login-card {
-  width: min(440px, 100%);
-  background: #fff;
-  border-radius: 18px;
-  padding: 38px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.25);
-}
-
-.brand-mark {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  margin-bottom: 18px;
-  background: var(--navy);
-  color: #fff;
-  font-weight: 800;
-  font-size: 20px;
-}
-
-.login-card h1 { margin: 0 0 8px; color: var(--navy); }
-.subtitle { margin: 0 0 26px; color: var(--muted); }
-
-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 700;
-  color: #334155;
-  margin-bottom: 6px;
-}
-
-input, select, textarea {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-  background: #fff;
-  color: var(--text);
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: 3px solid rgba(31,111,178,.15);
-  border-color: var(--blue);
-}
-
-.login-card input { margin-bottom: 16px; }
-
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  background: var(--navy);
-  color: #fff;
-  padding: 16px 28px;
-  box-shadow: 0 3px 12px rgba(0,0,0,.18);
-}
-
-.app-header h1 { margin: 0; font-size: 22px; }
-.app-header p { margin: 4px 0 0; opacity: .78; }
-.header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-.tabs {
-  position: sticky;
-  top: 76px;
-  z-index: 15;
-  display: flex;
-  gap: 4px;
-  padding: 10px 28px 0;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab {
-  background: transparent;
-  color: var(--muted);
-  border-radius: 8px 8px 0 0;
-  padding: 12px 18px;
-}
-
-.tab.active {
-  color: var(--blue-dark);
-  background: var(--light-blue);
-  border-bottom: 3px solid var(--blue);
-}
-
-.app-main { max-width: 1500px; margin: 0 auto; padding: 28px; }
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 20px;
-  margin-bottom: 18px;
-}
-
-.section-heading h2 { margin: 0 0 4px; color: var(--navy); }
-.section-heading p { margin: 0; color: var(--muted); }
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 22px;
-  box-shadow: var(--shadow);
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 18px;
-}
-
-.field-wide { grid-column: 1 / -1; }
-.form-actions { display: flex; gap: 10px; }
-
-.filter-bar, .admin-filters {
-  display: grid;
-  grid-template-columns: 220px minmax(260px, 1fr) auto;
-  align-items: end;
-  gap: 16px;
-  margin-bottom: 18px;
-}
-
-.admin-filters { grid-template-columns: 210px 260px minmax(250px, 1fr) auto; }
-.filter-button { height: 41px; }
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(150px, 1fr));
-  gap: 16px;
-  margin: 18px 0;
-}
-
-.metric-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: var(--shadow);
-}
-
-.metric-card span { color: var(--muted); font-size: 13px; font-weight: 700; }
-.metric-card strong { display: block; margin-top: 10px; font-size: 30px; color: var(--navy); }
-.metric-card.highlight { background: var(--navy); }
-.metric-card.highlight span, .metric-card.highlight strong { color: #fff; }
-
-.two-column {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-bottom: 18px;
-}
-
-.card h3 { margin-top: 0; color: var(--navy); }
-
-.billing-box p {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #edf2f7;
-  padding: 10px 0;
-  margin: 0;
-}
-
-.billing-total {
-  margin-top: 12px !important;
-  padding: 18px !important;
-  border-radius: 10px;
-  background: var(--light-blue);
-  border: 0 !important;
-}
-
-.billing-total strong { color: var(--navy); font-size: 24px; }
-
-.table-card { padding: 0; overflow: hidden; }
-.table-card h3 { padding: 20px 20px 0; }
-.table-wrap { width: 100%; overflow-x: auto; }
-.table-wrap.compact { max-height: 330px; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 980px;
-}
-
-.compact table { min-width: 0; }
-
-th, td {
-  padding: 11px 12px;
-  border-bottom: 1px solid #e6edf4;
-  text-align: left;
-  vertical-align: top;
-  font-size: 13px;
-}
-
-th {
-  position: sticky;
-  top: 0;
-  background: #edf4fa;
-  color: var(--navy);
-  white-space: nowrap;
-}
-
-tbody tr:nth-child(even) { background: #f9fbfd; }
-tbody tr:hover { background: #eef7ff; }
-
-.actions-cell { display: flex; gap: 6px; white-space: nowrap; }
-.notes-cell { min-width: 220px; max-width: 360px; white-space: normal; }
-
-.message { min-height: 20px; margin: 12px 0 0; font-weight: 700; }
-.message.error { color: var(--danger); }
-.message.success { color: var(--success); }
-.empty-state { padding: 30px; text-align: center; color: var(--muted); }
-.button-row { display: flex; gap: 10px; }
-
-@media (max-width: 1050px) {
-  .form-grid { grid-template-columns: repeat(2, 1fr); }
-  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
-  .two-column { grid-template-columns: 1fr; }
-  .admin-filters, .filter-bar { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 680px) {
-  .app-header, .section-heading { align-items: stretch; flex-direction: column; }
-  .header-actions { justify-content: flex-start; }
-  .tabs { top: 128px; padding-left: 10px; overflow-x: auto; }
-  .app-main { padding: 16px; }
-  .form-grid, .dashboard-grid, .admin-filters, .filter-bar { grid-template-columns: 1fr; }
-  .field-wide { grid-column: auto; }
-  .section-heading { align-items: stretch; }
-  .button-row { flex-direction: column; }
-}
-
-</style>
+    *{box-sizing:border-box}
+    :root{
+      --navy:#12355b;--blue:#1f6fb2;--blue2:#15558a;--light:#eaf4ff;
+      --bg:#f4f7fb;--white:#fff;--text:#1f2937;--muted:#64748b;
+      --border:#d7e0ea;--danger:#b42318;--success:#16794a
+    }
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .hidden{display:none!important}
+    button,input,select,textarea{font:inherit}
+    button{border:0;border-radius:8px;padding:10px 16px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+    button:hover{background:var(--blue2)}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    button.secondary{background:#e8eef5;color:var(--navy)}
+    button.danger{background:#fff0ef;color:var(--danger)}
+    .login-page{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#12355b,#1f6fb2)}
+    .login-card{width:min(430px,100%);background:#fff;border-radius:18px;padding:36px;box-shadow:0 20px 55px rgba(0,0,0,.28)}
+    .logo{width:62px;height:62px;display:grid;place-items:center;border-radius:15px;background:var(--navy);color:#fff;font-weight:800;margin-bottom:18px}
+    .login-card h1{margin:0 0 8px;color:var(--navy)}
+    .login-card p{color:var(--muted)}
+    label{display:block;margin-bottom:6px;font-size:13px;font-weight:700}
+    input,select,textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:#fff;color:var(--text)}
+    .login-card input{margin-bottom:15px}
+    .login-card button{width:100%}
+    .header{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 26px;background:var(--navy);color:#fff}
+    .header h1{margin:0;font-size:22px}
+    .header p{margin:4px 0 0;opacity:.8}
+    .header-buttons,.button-row,.actions{display:flex;gap:10px}
+    .tabs{position:sticky;top:74px;z-index:10;display:flex;gap:4px;padding:10px 26px 0;background:#fff;border-bottom:1px solid var(--border)}
+    .tab{background:transparent;color:var(--muted);border-radius:8px 8px 0 0}
+    .tab.active{color:var(--blue2);background:var(--light);border-bottom:3px solid var(--blue)}
+    .container{max-width:1500px;margin:auto;padding:28px}
+    .title-row{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
+    .title-row h2{margin:0 0 4px;color:var(--navy)}
+    .title-row p{margin:0;color:var(--muted)}
+    .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:0 10px 28px rgba(18,53,91,.08)}
+    .grid-form{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:18px}
+    .full{grid-column:1/-1}
+    .filters,.admin-filters{display:grid;gap:16px;align-items:end;margin-bottom:18px}
+    .filters{grid-template-columns:220px 1fr auto}
+    .admin-filters{grid-template-columns:210px 250px 1fr auto}
+    .metrics{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:16px;margin-bottom:18px}
+    .metric{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 10px 28px rgba(18,53,91,.08)}
+    .metric span{color:var(--muted);font-size:13px;font-weight:700}
+    .metric strong{display:block;margin-top:10px;color:var(--navy);font-size:30px}
+    .metric.highlight{background:var(--navy)}
+    .metric.highlight span,.metric.highlight strong{color:#fff}
+    .table-card{padding:0;overflow:hidden;margin-bottom:18px}
+    .table-card h3{padding:20px 20px 0;color:var(--navy)}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;min-width:1000px;border-collapse:collapse}
+    th,td{padding:11px 12px;border-bottom:1px solid #e6edf4;text-align:left;vertical-align:top;font-size:13px}
+    th{background:#edf4fa;color:var(--navy);white-space:nowrap}
+    tbody tr:nth-child(even){background:#f9fbfd}
+    .actions-cell{white-space:nowrap}
+    .actions-cell button{padding:6px 10px;font-size:12px;margin-right:5px}
+    .notes-cell{min-width:220px;max-width:360px;white-space:normal}
+    .qualifies{color:var(--success);font-weight:700}
+    .not-qualifies{color:var(--muted)}
+    .message{min-height:20px;font-weight:700}
+    .message.error{color:var(--danger)}
+    .message.success{color:var(--success)}
+    .empty{text-align:center;color:var(--muted);padding:26px}
+    .contract-note{padding:14px;border-radius:10px;background:#fff8e6;border:1px solid #f2d384;margin-bottom:18px}
+    @media(max-width:1050px){
+      .grid-form,.metrics{grid-template-columns:repeat(2,1fr)}
+      .filters,.admin-filters{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:700px){
+      .header,.title-row{flex-direction:column;align-items:stretch}
+      .tabs{top:125px;overflow-x:auto}
+      .container{padding:16px}
+      .grid-form,.metrics,.filters,.admin-filters{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .header-buttons,.actions,.button-row{flex-direction:column}
+    }
+  </style>
 </head>
 <body>
-  <div id="loginPage" class="login-page">
-    <div class="login-card">
-      <div class="brand-mark">BPS</div>
+
+<section id="loginPage" class="login-page">
+  <div class="login-card">
+    <div class="logo">BPS</div>
+    <h1>Transportation Penalty Tracker</h1>
+    <p>Late Bus Reporting and Monthly Billing</p>
+
+    <label for="loginEmail">Email</label>
+    <input id="loginEmail" type="email" autocomplete="username">
+
+    <label for="loginPassword">Password</label>
+    <input id="loginPassword" type="password" autocomplete="current-password">
+
+    <button id="loginButton" type="button">Sign In</button>
+    <p id="loginMessage" class="message"></p>
+  </div>
+</section>
+
+<div id="appPage" class="hidden">
+  <header class="header">
+    <div>
       <h1>Transportation Penalty Tracker</h1>
-      <p class="subtitle">Late Bus Reporting and Monthly Billing</p>
-
-      <label for="loginEmail">Email</label>
-      <input id="loginEmail" type="email" autocomplete="username" placeholder="name@bridgeportedu.net">
-
-      <label for="loginPassword">Password</label>
-      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password">
-
-      <button id="loginButton" type="button" class="primary full-width" onclick="login()">Sign In</button>
-      <p id="loginMessage" class="message"></p>
+      <p id="headerUser"></p>
     </div>
-  </div>
+    <div class="header-buttons">
+      <button id="refreshButton" type="button" class="secondary">Refresh</button>
+      <button id="logoutButton" type="button" class="danger">Logout</button>
+    </div>
+  </header>
 
-  <div id="application" class="hidden">
-    <header class="app-header">
-      <div>
-        <h1>Transportation Penalty Tracker</h1>
-        <p id="headerSubtitle">Late Bus Reporting</p>
+  <nav class="tabs">
+    <button class="tab active" data-page="entryPage">Enter Late Bus</button>
+    <button class="tab" data-page="myEntriesPage">My Entries</button>
+    <button id="adminTab" class="tab hidden" data-page="adminPage">Admin Dashboard</button>
+  </nav>
+
+  <main class="container">
+    <section id="entryPage" class="page">
+      <div class="title-row">
+        <div>
+          <h2>Report a Late Bus</h2>
+          <p>Route is required because penalties are calculated by route.</p>
+        </div>
       </div>
-      <div class="header-actions">
-        <span id="welcomeUser"></span>
-        <button id="refreshButton" class="secondary">Refresh</button>
-        <button id="logoutButton" class="danger-outline">Logout</button>
+
+      <div class="contract-note">
+        Only incidents <strong>more than 10 minutes late</strong> count. For each route, the first two qualifying incidents in a calendar month are not billed. Every additional qualifying incident is $50.
       </div>
-    </header>
 
-    <nav class="tabs">
-      <button class="tab active" data-view="entryView">Enter Late Bus</button>
-      <button class="tab" data-view="myEntriesView">My Entries</button>
-      <button id="adminTab" class="tab hidden" data-view="adminView">Admin Dashboard</button>
-    </nav>
+      <form id="entryForm" class="card grid-form">
+        <input id="entryId" type="hidden">
 
-    <main class="app-main">
-      <section id="entryView" class="view">
-        <div class="section-heading">
-          <div>
-            <h2>Report a Late Bus</h2>
-            <p>Enter one record for each late arrival.</p>
-          </div>
+        <div>
+          <label for="incidentDate">Date *</label>
+          <input id="incidentDate" type="date" required>
         </div>
 
-        <form id="lateBusForm" class="card form-grid">
-          <input id="entryId" type="hidden">
-
-          <div class="field">
-            <label for="incidentDate">Date *</label>
-            <input id="incidentDate" type="date" required>
-          </div>
-
-          <div class="field">
-            <label for="schoolSelect">School *</label>
-            <select id="schoolSelect" required></select>
-          </div>
-
-          <div class="field">
-            <label for="busNumber">Bus Number *</label>
-            <input id="busNumber" type="text" maxlength="30" required placeholder="Example: 421">
-          </div>
-
-          <div class="field">
-            <label for="routeNumber">Route / Run</label>
-            <input id="routeNumber" type="text" maxlength="50" placeholder="Optional">
-          </div>
-
-          <div class="field">
-            <label for="scheduledTime">Scheduled Arrival *</label>
-            <input id="scheduledTime" type="time" required>
-          </div>
-
-          <div class="field">
-            <label for="actualTime">Actual Arrival *</label>
-            <input id="actualTime" type="time" required>
-          </div>
-
-          <div class="field">
-            <label for="minutesLate">Minutes Late</label>
-            <input id="minutesLate" type="number" readonly>
-          </div>
-
-          <div class="field">
-            <label for="reasonSelect">Reason</label>
-            <select id="reasonSelect">
-              <option value="">Select a reason</option>
-              <option>Traffic</option>
-              <option>Mechanical issue</option>
-              <option>Driver issue</option>
-              <option>Route delay</option>
-              <option>Weather</option>
-              <option>Unknown</option>
-              <option>Other</option>
-            </select>
-          </div>
-
-          <div class="field field-wide">
-            <label for="notes">Notes *</label>
-            <textarea id="notes" rows="4" required placeholder="Describe the late arrival and any information provided by transportation."></textarea>
-          </div>
-
-          <div class="form-actions field-wide">
-            <button id="saveEntryButton" type="submit" class="primary">Save Entry</button>
-            <button id="cancelEditButton" type="button" class="secondary hidden">Cancel Edit</button>
-          </div>
-
-          <p id="entryMessage" class="message field-wide"></p>
-        </form>
-      </section>
-
-      <section id="myEntriesView" class="view hidden">
-        <div class="section-heading">
-          <div>
-            <h2>My Entries</h2>
-            <p>View, filter, edit, and export every entry you submitted.</p>
-          </div>
-          <button id="exportMyEntriesButton" class="primary">Export My Entries</button>
+        <div>
+          <label for="schoolSelect">School *</label>
+          <select id="schoolSelect" required></select>
         </div>
 
-        <div class="card filter-bar">
-          <div class="field">
-            <label for="myMonthFilter">Month</label>
-            <input id="myMonthFilter" type="month">
-          </div>
-          <div class="field">
-            <label for="mySearchFilter">Search</label>
-            <input id="mySearchFilter" type="search" placeholder="Bus, route, school, or notes">
-          </div>
-          <button id="clearMyFiltersButton" class="secondary filter-button">Clear Filters</button>
+        <div>
+          <label for="busNumber">Bus Number *</label>
+          <input id="busNumber" type="text" maxlength="30" required>
         </div>
 
-        <div class="card table-card">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>School</th>
-                  <th>Bus</th>
-                  <th>Route</th>
-                  <th>Scheduled</th>
-                  <th>Actual</th>
-                  <th>Minutes Late</th>
-                  <th>Reason</th>
-                  <th>Notes</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="myEntriesBody"></tbody>
-            </table>
-          </div>
-          <p id="myEntriesEmpty" class="empty-state hidden">No entries match the current filters.</p>
-        </div>
-      </section>
-
-      <section id="adminView" class="view hidden">
-        <div class="section-heading">
-          <div>
-            <h2>Administrator Dashboard</h2>
-            <p>District-wide late bus activity and monthly penalty billing.</p>
-          </div>
-          <div class="button-row">
-            <button id="exportAdminDetailButton" class="secondary">Export Detail</button>
-            <button id="exportBillingButton" class="primary">Export Billing Summary</button>
-          </div>
+        <div>
+          <label for="routeNumber">Route *</label>
+          <input id="routeNumber" type="text" maxlength="50" required>
         </div>
 
-        <div class="card admin-filters">
-          <div class="field">
-            <label for="adminMonthFilter">Reporting Month</label>
-            <input id="adminMonthFilter" type="month">
-          </div>
-          <div class="field">
-            <label for="adminSchoolFilter">School</label>
-            <select id="adminSchoolFilter"></select>
-          </div>
-          <div class="field">
-            <label for="adminSearchFilter">Search</label>
-            <input id="adminSearchFilter" type="search" placeholder="Bus, route, user, or notes">
-          </div>
-          <button id="clearAdminFiltersButton" class="secondary filter-button">Clear Filters</button>
+        <div>
+          <label for="scheduledTime">Scheduled Arrival *</label>
+          <input id="scheduledTime" type="time" required>
         </div>
 
-        <div class="dashboard-grid">
-          <article class="metric-card">
-            <span>Late Incidents</span>
-            <strong id="metricIncidents">0</strong>
-          </article>
-          <article class="metric-card">
-            <span>Non-Billable Incidents</span>
-            <strong id="metricFree">0</strong>
-          </article>
-          <article class="metric-card">
-            <span>Billable Incidents</span>
-            <strong id="metricBillable">0</strong>
-          </article>
-          <article class="metric-card highlight">
-            <span>Amount to Bill</span>
-            <strong id="metricAmount">$0.00</strong>
-          </article>
-          <article class="metric-card">
-            <span>Schools Reporting</span>
-            <strong id="metricSchools">0 / 38</strong>
-          </article>
+        <div>
+          <label for="actualTime">Actual Arrival *</label>
+          <input id="actualTime" type="time" required>
         </div>
 
-        <div class="two-column">
-          <div class="card">
-            <h3>Monthly Billing Calculation</h3>
-            <div class="billing-box">
-              <p>Total late incidents: <strong id="billingTotal">0</strong></p>
-              <p>First two incidents: <strong>No charge</strong></p>
-              <p>Billable incidents: <strong id="billingCount">0</strong></p>
-              <p class="billing-total"><span id="billingEquation">0 × $50</span><strong id="billingAmount">$0.00</strong></p>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>Late Incidents by School</h3>
-            <div class="table-wrap compact">
-              <table>
-                <thead><tr><th>School</th><th>Incidents</th></tr></thead>
-                <tbody id="schoolSummaryBody"></tbody>
-              </table>
-            </div>
-          </div>
+        <div>
+          <label for="minutesLate">Minutes Late</label>
+          <input id="minutesLate" type="number" readonly>
         </div>
 
-        <div class="card table-card">
-          <h3>District Entries</h3>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>School</th>
-                  <th>Bus</th>
-                  <th>Route</th>
-                  <th>Scheduled</th>
-                  <th>Actual</th>
-                  <th>Minutes Late</th>
-                  <th>Reason</th>
-                  <th>Entered By</th>
-                  <th>Notes</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="adminEntriesBody"></tbody>
-            </table>
-          </div>
-          <p id="adminEntriesEmpty" class="empty-state hidden">No entries match the current filters.</p>
+        <div>
+          <label for="qualifyingStatus">Contract Status</label>
+          <input id="qualifyingStatus" type="text" readonly value="Not calculated">
         </div>
-      </section>
-    </main>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <div>
+          <label for="reason">Reason</label>
+          <select id="reason">
+            <option value="">Select a reason</option>
+            <option>Traffic</option>
+            <option>Mechanical issue</option>
+            <option>Driver issue</option>
+            <option>Route delay</option>
+            <option>Weather</option>
+            <option>Unknown</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="notes">Notes *</label>
+          <textarea id="notes" rows="4" required></textarea>
+        </div>
+
+        <div class="full actions">
+          <button id="saveButton" type="submit">Save Entry</button>
+          <button id="cancelEditButton" type="button" class="secondary hidden">Cancel Edit</button>
+        </div>
+
+        <p id="entryMessage" class="message full"></p>
+      </form>
+    </section>
+
+    <section id="myEntriesPage" class="page hidden">
+      <div class="title-row">
+        <div>
+          <h2>My Entries</h2>
+          <p>View every entry you submitted.</p>
+        </div>
+        <button id="exportMyButton" type="button">Export My Entries</button>
+      </div>
+
+      <div class="card filters">
+        <div>
+          <label for="myMonth">Month</label>
+          <input id="myMonth" type="month">
+        </div>
+        <div>
+          <label for="mySearch">Search</label>
+          <input id="mySearch" type="search" placeholder="Bus, route, school, reason, or notes">
+        </div>
+        <button id="clearMyFilters" type="button" class="secondary">Clear Filters</button>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>School</th><th>Bus</th><th>Route</th><th>Scheduled</th><th>Actual</th>
+                <th>Minutes Late</th><th>Counts?</th><th>Reason</th><th>Notes</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="myEntriesBody"></tbody>
+          </table>
+        </div>
+        <p id="myEmpty" class="empty hidden">No entries found.</p>
+      </div>
+    </section>
+
+    <section id="adminPage" class="page hidden">
+      <div class="title-row">
+        <div>
+          <h2>Administrator Dashboard</h2>
+          <p>Monthly penalties calculated independently for each route.</p>
+        </div>
+        <div class="button-row">
+          <button id="exportDetailButton" type="button" class="secondary">Export Detail</button>
+          <button id="exportBillingButton" type="button">Export Billing Summary</button>
+        </div>
+      </div>
+
+      <div class="card admin-filters">
+        <div>
+          <label for="adminMonth">Reporting Month</label>
+          <input id="adminMonth" type="month">
+        </div>
+        <div>
+          <label for="adminSchool">School</label>
+          <select id="adminSchool"></select>
+        </div>
+        <div>
+          <label for="adminSearch">Search</label>
+          <input id="adminSearch" type="search" placeholder="Route, bus, school, user, reason, or notes">
+        </div>
+        <button id="clearAdminFilters" type="button" class="secondary">Clear Filters</button>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><span>All Late Incidents</span><strong id="metricTotal">0</strong></div>
+        <div class="metric"><span>Qualifying &gt;10 Minutes</span><strong id="metricQualifying">0</strong></div>
+        <div class="metric"><span>Billable Incidents</span><strong id="metricBillable">0</strong></div>
+        <div class="metric highlight"><span>Amount to Bill</span><strong id="metricAmount">$0.00</strong></div>
+        <div class="metric"><span>Routes with Penalties</span><strong id="metricRoutes">0</strong></div>
+      </div>
+
+      <div class="card table-card">
+        <h3>Penalty Summary by Route</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Route</th><th>Qualifying Incidents</th><th>Non-Billable</th><th>Billable</th><th>Amount Due</th>
+              </tr>
+            </thead>
+            <tbody id="routeSummaryBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <h3>District Entries</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>School</th><th>Bus</th><th>Route</th><th>Scheduled</th><th>Actual</th>
+                <th>Minutes Late</th><th>Counts?</th><th>Reason</th><th>Entered By</th><th>Notes</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminEntriesBody"></tbody>
+          </table>
+        </div>
+        <p id="adminEmpty" class="empty hidden">No entries found.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://hgldvbpyrxdqsvwifjrw.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_gtyoV3ccYS9MLMcwu-wXQw_0c73DILR";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false } });
-</script>
-<script>
-console.log("Transportation Penalty Tracker single-file version loaded.");
 
-const PENALTY_FREE_INCIDENTS = 2;
-const PENALTY_PER_ADDITIONAL_INCIDENT = 50;
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
+});
+
+const FREE_PER_ROUTE = 2;
+const PENALTY_AMOUNT = 50;
+const QUALIFYING_MINUTES = 10;
 
 let currentUser = null;
 let currentProfile = null;
 let schools = [];
 let myEntries = [];
-let adminEntries = [];
+let allEntries = [];
 
 const $ = (id) => document.getElementById(id);
 
-document.addEventListener("DOMContentLoaded", initializeApp);
+document.addEventListener("DOMContentLoaded", initialize);
 
-async function initializeApp() {
-  setDefaultDates();
+async function initialize() {
+  setDefaults();
   bindEvents();
 
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session) {
-    await loadApplication(session.user);
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (!error && data.session?.user) {
+    await openApplication(data.session.user);
   }
 }
 
 function bindEvents() {
   $("loginButton").addEventListener("click", login);
-  $("loginPassword").addEventListener("keydown", e => {
-    if (e.key === "Enter") login();
+
+  $("loginPassword").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") login();
   });
+
   $("logoutButton").addEventListener("click", logout);
-  $("refreshButton").addEventListener("click", refreshAll);
-  $("lateBusForm").addEventListener("submit", saveEntry);
-  $("cancelEditButton").addEventListener("click", resetEntryForm);
+  $("refreshButton").addEventListener("click", refreshData);
+  $("entryForm").addEventListener("submit", saveEntry);
+  $("cancelEditButton").addEventListener("click", () => resetForm());
 
   $("scheduledTime").addEventListener("input", calculateMinutesLate);
   $("actualTime").addEventListener("input", calculateMinutesLate);
 
-  document.querySelectorAll(".tab").forEach(tab => {
-    tab.addEventListener("click", () => showView(tab.dataset.view));
+  document.querySelectorAll(".tab").forEach((button) => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
   });
 
-  $("myMonthFilter").addEventListener("input", renderMyEntries);
-  $("mySearchFilter").addEventListener("input", renderMyEntries);
-  $("clearMyFiltersButton").addEventListener("click", () => {
-    $("myMonthFilter").value = "";
-    $("mySearchFilter").value = "";
+  $("myMonth").addEventListener("input", renderMyEntries);
+  $("mySearch").addEventListener("input", renderMyEntries);
+
+  $("clearMyFilters").addEventListener("click", () => {
+    $("myMonth").value = "";
+    $("mySearch").value = "";
     renderMyEntries();
   });
 
-  $("adminMonthFilter").addEventListener("input", renderAdminDashboard);
-  $("adminSchoolFilter").addEventListener("change", renderAdminDashboard);
-  $("adminSearchFilter").addEventListener("input", renderAdminDashboard);
-  $("clearAdminFiltersButton").addEventListener("click", () => {
-    $("adminMonthFilter").value = getCurrentMonth();
-    $("adminSchoolFilter").value = "";
-    $("adminSearchFilter").value = "";
-    renderAdminDashboard();
+  $("adminMonth").addEventListener("input", renderAdmin);
+  $("adminSchool").addEventListener("change", renderAdmin);
+  $("adminSearch").addEventListener("input", renderAdmin);
+
+  $("clearAdminFilters").addEventListener("click", () => {
+    $("adminMonth").value = currentMonth();
+    $("adminSchool").value = "";
+    $("adminSearch").value = "";
+    renderAdmin();
   });
 
-  $("exportMyEntriesButton").addEventListener("click", exportMyEntries);
-  $("exportAdminDetailButton").addEventListener("click", exportAdminDetail);
+  $("exportMyButton").addEventListener("click", exportMyEntries);
+  $("exportDetailButton").addEventListener("click", exportAdminDetail);
   $("exportBillingButton").addEventListener("click", exportBillingSummary);
 }
 
 async function login() {
-  clearMessage("loginMessage");
   const email = $("loginEmail").value.trim();
   const password = $("loginPassword").value;
+
+  clearMessage("loginMessage");
 
   if (!email || !password) {
     showMessage("loginMessage", "Enter your email and password.", true);
     return;
   }
 
-  toggleButton("loginButton", true, "Signing In...");
+  setButton("loginButton", true, "Signing In...");
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-  toggleButton("loginButton", false, "Sign In");
+    if (error) throw error;
+    if (!data.user) throw new Error("No user was returned.");
 
-  if (error) {
-    showMessage("loginMessage", error.message, true);
-    return;
+    await openApplication(data.user);
+  } catch (error) {
+    showMessage("loginMessage", error.message || "Unable to sign in.", true);
+  } finally {
+    setButton("loginButton", false, "Sign In");
   }
-
-  await loadApplication(data.user);
 }
 
-window.login = login;
-
-async function loadApplication(user) {
+async function openApplication(user) {
   currentUser = user;
 
-  const { data: profile, error } = await supabaseClient
-    .from("profiles")
-    .select("id, full_name, email, role, school_id, active, schools(id, school_name)")
-    .eq("id", user.id)
-    .single();
+  try {
+    const { data: profile, error } = await supabaseClient
+      .from("profiles")
+      .select("id,email,full_name,role,school_id,active")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  if (error) {
-    console.error("Profile error:", error);
-    showMessage("loginMessage", `Profile error: ${error.message}`, true);
-    await supabaseClient.auth.signOut();
-    return;
-  }
+    if (error) throw error;
+    if (!profile) throw new Error("Login worked, but your profile is missing.");
+    if (profile.active === false) throw new Error("Your account is inactive.");
+    if (!["admin", "user"].includes(profile.role)) throw new Error("Your role must be admin or user.");
 
-  if (!profile) {
-    showMessage("loginMessage", "Your login worked, but no profile record was found.", true);
-    await supabaseClient.auth.signOut();
-    return;
-  }
+    currentProfile = profile;
 
-  if (profile.active === false) {
-    showMessage("loginMessage", "Your profile is inactive.", true);
-    await supabaseClient.auth.signOut();
-    return;
-  }
+    await loadSchools();
 
-  currentProfile = profile;
-  await loadSchools();
+    $("loginPage").classList.add("hidden");
+    $("appPage").classList.remove("hidden");
 
-  $("loginPage").classList.add("hidden");
-  $("application").classList.remove("hidden");
-  $("welcomeUser").textContent = `${profile.full_name || profile.email} (${profile.role})`;
-  $("adminTab").classList.toggle("hidden", profile.role !== "admin");
+    $("headerUser").textContent = `${profile.full_name || profile.email} (${profile.role})`;
+    $("adminTab").classList.toggle("hidden", profile.role !== "admin");
 
-  populateSchoolSelectors();
+    populateSchools();
 
-  if (profile.role !== "admin") {
-    $("schoolSelect").value = profile.school_id || "";
-    $("schoolSelect").disabled = true;
-  } else {
     $("schoolSelect").disabled = false;
-  }
+    if (profile.school_id) $("schoolSelect").value = profile.school_id;
 
-  await refreshAll();
+    await refreshData();
+  } catch (error) {
+    await supabaseClient.auth.signOut();
+
+    $("appPage").classList.add("hidden");
+    $("loginPage").classList.remove("hidden");
+
+    showMessage("loginMessage", error.message, true);
+  }
 }
 
 async function logout() {
   await supabaseClient.auth.signOut();
+
   currentUser = null;
   currentProfile = null;
+  schools = [];
   myEntries = [];
-  adminEntries = [];
-  $("application").classList.add("hidden");
+  allEntries = [];
+
+  $("appPage").classList.add("hidden");
   $("loginPage").classList.remove("hidden");
   $("loginPassword").value = "";
-  showView("entryView");
+  clearMessage("loginMessage");
 }
 
 async function loadSchools() {
   const { data, error } = await supabaseClient
     .from("schools")
-    .select("id, school_name, active")
+    .select("id,school_name")
     .eq("active", true)
     .order("school_name");
 
-  if (error) throw new Error(error.message);
+  if (error) throw error;
+
   schools = data || [];
 }
 
-function populateSchoolSelectors() {
-  const entryOptions = ['<option value="">Select a school</option>']
-    .concat(schools.map(s => `<option value="${s.id}">${escapeHtml(s.school_name)}</option>`));
-  $("schoolSelect").innerHTML = entryOptions.join("");
+function populateSchools() {
+  $("schoolSelect").innerHTML = [
+    '<option value="">Select a school</option>',
+    ...schools.map((school) =>
+      `<option value="${school.id}">${escapeHtml(school.school_name)}</option>`
+    )
+  ].join("");
 
-  const adminOptions = ['<option value="">All schools</option>']
-    .concat(schools.map(s => `<option value="${s.id}">${escapeHtml(s.school_name)}</option>`));
-  $("adminSchoolFilter").innerHTML = adminOptions.join("");
+  $("adminSchool").innerHTML = [
+    '<option value="">All schools</option>',
+    ...schools.map((school) =>
+      `<option value="${school.id}">${escapeHtml(school.school_name)}</option>`
+    )
+  ].join("");
 }
 
-async function refreshAll() {
-  toggleButton("refreshButton", true, "Refreshing...");
+async function refreshData() {
+  setButton("refreshButton", true, "Refreshing...");
 
   try {
     await loadMyEntries();
+
     if (currentProfile.role === "admin") {
-      await loadAdminEntries();
+      await loadAllEntries();
+    } else {
+      allEntries = [];
     }
+
     renderMyEntries();
-    renderAdminDashboard();
+    renderAdmin();
   } catch (error) {
-    alert(`Refresh failed: ${error.message}`);
+    alert(error.message);
   } finally {
-    toggleButton("refreshButton", false, "Refresh");
+    setButton("refreshButton", false, "Refresh");
   }
 }
 
@@ -759,92 +523,123 @@ async function loadMyEntries() {
   const { data, error } = await supabaseClient
     .from("late_bus_entries")
     .select(`
-      id, incident_date, bus_number, route_number, scheduled_time, actual_time,
-      minutes_late, reason, notes, created_at, updated_at, school_id,
+      id,incident_date,school_id,bus_number,route_number,
+      scheduled_time,actual_time,minutes_late,reason,notes,created_at,
       schools(school_name)
     `)
     .eq("created_by", currentUser.id)
     .order("incident_date", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if (error) throw new Error(error.message);
+  if (error) throw error;
+
   myEntries = data || [];
 }
 
-async function loadAdminEntries() {
+async function loadAllEntries() {
   const { data, error } = await supabaseClient
     .from("late_bus_entries")
     .select(`
-      id, incident_date, bus_number, route_number, scheduled_time, actual_time,
-      minutes_late, reason, notes, created_at, updated_at, school_id, created_by,
-      schools(school_name),
-      profiles!late_bus_entries_created_by_fkey(full_name, email)
+      id,incident_date,school_id,bus_number,route_number,
+      scheduled_time,actual_time,minutes_late,reason,notes,created_at,created_by,
+      schools(school_name)
     `)
     .order("incident_date", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if (error) throw new Error(error.message);
-  adminEntries = data || [];
+  if (error) throw error;
+
+  const entries = data || [];
+  const userIds = [...new Set(entries.map((entry) => entry.created_by))];
+  let profileMap = {};
+
+  if (userIds.length) {
+    const { data: profiles, error: profileError } = await supabaseClient
+      .from("profiles")
+      .select("id,full_name,email")
+      .in("id", userIds);
+
+    if (profileError) throw profileError;
+
+    profileMap = Object.fromEntries(
+      (profiles || []).map((profile) => [profile.id, profile])
+    );
+  }
+
+  allEntries = entries.map((entry) => ({
+    ...entry,
+    entered_by: profileMap[entry.created_by] || null
+  }));
 }
 
 async function saveEntry(event) {
   event.preventDefault();
+
   clearMessage("entryMessage");
   calculateMinutesLate();
 
-  const entryId = $("entryId").value;
+  const id = $("entryId").value;
+
   const payload = {
     incident_date: $("incidentDate").value,
     school_id: Number($("schoolSelect").value),
     bus_number: $("busNumber").value.trim(),
-    route_number: emptyToNull($("routeNumber").value),
+    route_number: $("routeNumber").value.trim().toUpperCase(),
     scheduled_time: $("scheduledTime").value,
     actual_time: $("actualTime").value,
     minutes_late: Number($("minutesLate").value),
-    reason: emptyToNull($("reasonSelect").value),
+    reason: nullIfBlank($("reason").value),
     notes: $("notes").value.trim()
   };
 
-  if (!payload.incident_date || !payload.school_id || !payload.bus_number ||
-      !payload.scheduled_time || !payload.actual_time || !payload.notes) {
+  if (
+    !payload.incident_date ||
+    !payload.school_id ||
+    !payload.bus_number ||
+    !payload.route_number ||
+    !payload.scheduled_time ||
+    !payload.actual_time ||
+    !payload.notes
+  ) {
     showMessage("entryMessage", "Complete all required fields.", true);
     return;
   }
 
-  if (payload.minutes_late <= 0) {
-    showMessage("entryMessage", "Actual arrival must be later than the scheduled arrival.", true);
+  if (!Number.isFinite(payload.minutes_late) || payload.minutes_late <= 0) {
+    showMessage("entryMessage", "Actual arrival must be later than scheduled arrival.", true);
     return;
   }
 
-  toggleButton("saveEntryButton", true, entryId ? "Updating..." : "Saving...");
+  setButton("saveButton", true, id ? "Updating..." : "Saving...");
 
-  let result;
-  if (entryId) {
-    result = await supabaseClient
-      .from("late_bus_entries")
-      .update(payload)
-      .eq("id", entryId);
-  } else {
-    result = await supabaseClient
-      .from("late_bus_entries")
-      .insert({ ...payload, created_by: currentUser.id });
-  }
+  try {
+    const result = id
+      ? await supabaseClient.from("late_bus_entries").update(payload).eq("id", id)
+      : await supabaseClient.from("late_bus_entries").insert({
+          ...payload,
+          created_by: currentUser.id
+        });
 
-  toggleButton("saveEntryButton", false, entryId ? "Update Entry" : "Save Entry");
+    if (result.error) throw result.error;
 
-  if (result.error) {
-    const duplicate = result.error.code === "23505";
     showMessage(
       "entryMessage",
-      duplicate ? "This bus already has a matching entry for the selected school, date, and scheduled time." : result.error.message,
+      id ? "Entry updated successfully." : "Entry saved successfully."
+    );
+
+    resetForm(false);
+    await refreshData();
+  } catch (error) {
+    showMessage(
+      "entryMessage",
+      error.code === "23505"
+        ? "A matching entry already exists."
+        : error.message,
       true
     );
-    return;
+  } finally {
+    setButton("saveButton", false, id ? "Update Entry" : "Save Entry");
   }
-
-  showMessage("entryMessage", entryId ? "Entry updated successfully." : "Late bus entry saved successfully.");
-  resetEntryForm(false);
-  await refreshAll();
 }
 
 function calculateMinutesLate() {
@@ -853,165 +648,224 @@ function calculateMinutesLate() {
 
   if (!scheduled || !actual) {
     $("minutesLate").value = "";
+    $("qualifyingStatus").value = "Not calculated";
     return;
   }
 
-  const scheduledMinutes = timeToMinutes(scheduled);
-  let actualMinutes = timeToMinutes(actual);
+  const scheduledMinutes = toMinutes(scheduled);
+  let actualMinutes = toMinutes(actual);
 
-  if (actualMinutes < scheduledMinutes) actualMinutes += 24 * 60;
-  $("minutesLate").value = Math.max(0, actualMinutes - scheduledMinutes);
+  if (actualMinutes < scheduledMinutes) {
+    actualMinutes += 1440;
+  }
+
+  const late = actualMinutes - scheduledMinutes;
+
+  $("minutesLate").value = late;
+  $("qualifyingStatus").value =
+    late > QUALIFYING_MINUTES
+      ? "Counts toward contract penalty"
+      : "Does not count (10 minutes or less)";
 }
 
-function timeToMinutes(value) {
+function toMinutes(value) {
   const [hours, minutes] = value.split(":").map(Number);
   return hours * 60 + minutes;
 }
 
-function renderMyEntries() {
-  const month = $("myMonthFilter").value;
-  const search = $("mySearchFilter").value.trim().toLowerCase();
+function qualifies(entry) {
+  return Number(entry.minutes_late) > QUALIFYING_MINUTES;
+}
 
-  const filtered = myEntries.filter(entry => {
-    const monthMatch = !month || entry.incident_date.startsWith(month);
-    const haystack = [
+function filteredMyEntries() {
+  const month = $("myMonth").value;
+  const search = $("mySearch").value.trim().toLowerCase();
+
+  return myEntries.filter((entry) => {
+    const text = [
       entry.bus_number,
       entry.route_number,
       entry.reason,
       entry.notes,
       entry.schools?.school_name
-    ].join(" ").toLowerCase();
-    return monthMatch && (!search || haystack.includes(search));
-  });
+    ].filter(Boolean).join(" ").toLowerCase();
 
-  $("myEntriesBody").innerHTML = filtered.map(entry => `
+    return (
+      (!month || entry.incident_date.startsWith(month)) &&
+      (!search || text.includes(search))
+    );
+  });
+}
+
+function renderMyEntries() {
+  const rows = filteredMyEntries();
+
+  $("myEntriesBody").innerHTML = rows.map((entry) => `
     <tr>
       <td>${formatDate(entry.incident_date)}</td>
       <td>${escapeHtml(entry.schools?.school_name || "")}</td>
       <td>${escapeHtml(entry.bus_number)}</td>
-      <td>${escapeHtml(entry.route_number || "")}</td>
+      <td>${escapeHtml(entry.route_number)}</td>
       <td>${formatTime(entry.scheduled_time)}</td>
       <td>${formatTime(entry.actual_time)}</td>
       <td>${entry.minutes_late}</td>
+      <td class="${qualifies(entry) ? "qualifies" : "not-qualifies"}">
+        ${qualifies(entry) ? "Yes" : "No"}
+      </td>
       <td>${escapeHtml(entry.reason || "")}</td>
       <td class="notes-cell">${escapeHtml(entry.notes)}</td>
       <td class="actions-cell">
-        <button class="small-button edit-button" onclick="editEntry('${entry.id}', false)">Edit</button>
-        <button class="small-button delete-button" onclick="deleteEntry('${entry.id}')">Delete</button>
+        <button type="button" class="secondary" onclick="editEntry('${entry.id}', false)">Edit</button>
+        <button type="button" class="danger" onclick="deleteEntry('${entry.id}')">Delete</button>
       </td>
     </tr>
   `).join("");
 
-  $("myEntriesEmpty").classList.toggle("hidden", filtered.length > 0);
+  $("myEmpty").classList.toggle("hidden", rows.length > 0);
 }
 
-function getFilteredAdminEntries() {
-  const month = $("adminMonthFilter").value;
-  const schoolId = $("adminSchoolFilter").value;
-  const search = $("adminSearchFilter").value.trim().toLowerCase();
+function filteredAdminEntries() {
+  const month = $("adminMonth").value;
+  const schoolId = $("adminSchool").value;
+  const search = $("adminSearch").value.trim().toLowerCase();
 
-  return adminEntries.filter(entry => {
-    const monthMatch = !month || entry.incident_date.startsWith(month);
-    const schoolMatch = !schoolId || String(entry.school_id) === schoolId;
-    const haystack = [
+  return allEntries.filter((entry) => {
+    const text = [
       entry.bus_number,
       entry.route_number,
       entry.reason,
       entry.notes,
       entry.schools?.school_name,
-      entry.profiles?.full_name,
-      entry.profiles?.email
-    ].join(" ").toLowerCase();
+      entry.entered_by?.full_name,
+      entry.entered_by?.email
+    ].filter(Boolean).join(" ").toLowerCase();
 
-    return monthMatch && schoolMatch && (!search || haystack.includes(search));
+    return (
+      (!month || entry.incident_date.startsWith(month)) &&
+      (!schoolId || String(entry.school_id) === schoolId) &&
+      (!search || text.includes(search))
+    );
   });
 }
 
-function renderAdminDashboard() {
-  if (!currentProfile || currentProfile.role !== "admin") return;
+function calculateRouteSummary(entries) {
+  const counts = {};
 
-  const filtered = getFilteredAdminEntries();
-  const month = $("adminMonthFilter").value;
-  const monthEntries = adminEntries.filter(entry => !month || entry.incident_date.startsWith(month));
+  entries.filter(qualifies).forEach((entry) => {
+    const route = String(entry.route_number || "").trim().toUpperCase();
 
-  // Contract calculation is district-wide for the single transportation company.
-  const totalIncidents = monthEntries.length;
-  const nonBillable = Math.min(totalIncidents, PENALTY_FREE_INCIDENTS);
-  const billable = Math.max(0, totalIncidents - PENALTY_FREE_INCIDENTS);
-  const amount = billable * PENALTY_PER_ADDITIONAL_INCIDENT;
-  const schoolsReporting = new Set(monthEntries.map(e => e.school_id)).size;
-
-  $("metricIncidents").textContent = totalIncidents;
-  $("metricFree").textContent = nonBillable;
-  $("metricBillable").textContent = billable;
-  $("metricAmount").textContent = formatCurrency(amount);
-  $("metricSchools").textContent = `${schoolsReporting} / ${schools.length || 38}`;
-
-  $("billingTotal").textContent = totalIncidents;
-  $("billingCount").textContent = billable;
-  $("billingEquation").textContent = `${billable} × $${PENALTY_PER_ADDITIONAL_INCIDENT}`;
-  $("billingAmount").textContent = formatCurrency(amount);
-
-  const schoolCounts = {};
-  monthEntries.forEach(entry => {
-    const name = entry.schools?.school_name || "Unknown";
-    schoolCounts[name] = (schoolCounts[name] || 0) + 1;
+    if (route) {
+      counts[route] = (counts[route] || 0) + 1;
+    }
   });
 
-  $("schoolSummaryBody").innerHTML = Object.entries(schoolCounts)
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([name, count]) => `<tr><td>${escapeHtml(name)}</td><td>${count}</td></tr>`)
-    .join("") || '<tr><td colspan="2">No entries for this month.</td></tr>';
+  return Object.entries(counts)
+    .map(([route, qualifyingIncidents]) => {
+      const nonBillable = Math.min(qualifyingIncidents, FREE_PER_ROUTE);
+      const billable = Math.max(0, qualifyingIncidents - FREE_PER_ROUTE);
 
-  $("adminEntriesBody").innerHTML = filtered.map(entry => `
+      return {
+        route,
+        qualifyingIncidents,
+        nonBillable,
+        billable,
+        amount: billable * PENALTY_AMOUNT
+      };
+    })
+    .sort((a, b) => b.amount - a.amount || a.route.localeCompare(b.route));
+}
+
+function renderAdmin() {
+  if (!currentProfile || currentProfile.role !== "admin") return;
+
+  const month = $("adminMonth").value;
+
+  const monthEntries = allEntries.filter(
+    (entry) => !month || entry.incident_date.startsWith(month)
+  );
+
+  const summary = calculateRouteSummary(monthEntries);
+
+  const qualifyingCount = monthEntries.filter(qualifies).length;
+  const billableCount = summary.reduce((sum, route) => sum + route.billable, 0);
+  const amountDue = summary.reduce((sum, route) => sum + route.amount, 0);
+  const routesWithPenalties = summary.filter((route) => route.amount > 0).length;
+
+  $("metricTotal").textContent = monthEntries.length;
+  $("metricQualifying").textContent = qualifyingCount;
+  $("metricBillable").textContent = billableCount;
+  $("metricAmount").textContent = currency(amountDue);
+  $("metricRoutes").textContent = routesWithPenalties;
+
+  $("routeSummaryBody").innerHTML = summary.map((route) => `
+    <tr>
+      <td>${escapeHtml(route.route)}</td>
+      <td>${route.qualifyingIncidents}</td>
+      <td>${route.nonBillable}</td>
+      <td>${route.billable}</td>
+      <td>${currency(route.amount)}</td>
+    </tr>
+  `).join("") || '<tr><td colspan="5">No qualifying incidents for this month.</td></tr>';
+
+  const rows = filteredAdminEntries();
+
+  $("adminEntriesBody").innerHTML = rows.map((entry) => `
     <tr>
       <td>${formatDate(entry.incident_date)}</td>
       <td>${escapeHtml(entry.schools?.school_name || "")}</td>
       <td>${escapeHtml(entry.bus_number)}</td>
-      <td>${escapeHtml(entry.route_number || "")}</td>
+      <td>${escapeHtml(entry.route_number)}</td>
       <td>${formatTime(entry.scheduled_time)}</td>
       <td>${formatTime(entry.actual_time)}</td>
       <td>${entry.minutes_late}</td>
+      <td class="${qualifies(entry) ? "qualifies" : "not-qualifies"}">
+        ${qualifies(entry) ? "Yes" : "No"}
+      </td>
       <td>${escapeHtml(entry.reason || "")}</td>
-      <td>${escapeHtml(entry.profiles?.full_name || entry.profiles?.email || "")}</td>
+      <td>${escapeHtml(entry.entered_by?.full_name || entry.entered_by?.email || "")}</td>
       <td class="notes-cell">${escapeHtml(entry.notes)}</td>
       <td class="actions-cell">
-        <button class="small-button edit-button" onclick="editEntry('${entry.id}', true)">Edit</button>
-        <button class="small-button delete-button" onclick="deleteEntry('${entry.id}')">Delete</button>
+        <button type="button" class="secondary" onclick="editEntry('${entry.id}', true)">Edit</button>
+        <button type="button" class="danger" onclick="deleteEntry('${entry.id}')">Delete</button>
       </td>
     </tr>
   `).join("");
 
-  $("adminEntriesEmpty").classList.toggle("hidden", filtered.length > 0);
+  $("adminEmpty").classList.toggle("hidden", rows.length > 0);
 }
 
-function editEntry(id, fromAdmin) {
-  const source = fromAdmin ? adminEntries : myEntries;
-  const entry = source.find(item => item.id === id);
+function editEntry(id, useAdminSource) {
+  const source = useAdminSource ? allEntries : myEntries;
+  const entry = source.find((item) => item.id === id);
+
   if (!entry) return;
 
   $("entryId").value = entry.id;
   $("incidentDate").value = entry.incident_date;
   $("schoolSelect").value = entry.school_id;
   $("busNumber").value = entry.bus_number;
-  $("routeNumber").value = entry.route_number || "";
+  $("routeNumber").value = entry.route_number;
   $("scheduledTime").value = entry.scheduled_time.slice(0, 5);
   $("actualTime").value = entry.actual_time.slice(0, 5);
   $("minutesLate").value = entry.minutes_late;
-  $("reasonSelect").value = entry.reason || "";
+  $("qualifyingStatus").value =
+    qualifies(entry)
+      ? "Counts toward contract penalty"
+      : "Does not count (10 minutes or less)";
+  $("reason").value = entry.reason || "";
   $("notes").value = entry.notes;
-  $("saveEntryButton").textContent = "Update Entry";
+
+  $("saveButton").textContent = "Update Entry";
   $("cancelEditButton").classList.remove("hidden");
 
-  if (currentProfile.role === "admin") $("schoolSelect").disabled = false;
-  showView("entryView");
+  showPage("entryPage");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 window.editEntry = editEntry;
 
 async function deleteEntry(id) {
-  if (!confirm("Delete this late bus entry? This cannot be undone.")) return;
+  if (!confirm("Delete this entry?")) return;
 
   const { error } = await supabaseClient
     .from("late_bus_entries")
@@ -1023,103 +877,119 @@ async function deleteEntry(id) {
     return;
   }
 
-  await refreshAll();
+  await refreshData();
 }
 
 window.deleteEntry = deleteEntry;
 
-function resetEntryForm(clearMessageToo = true) {
-  $("lateBusForm").reset();
+function resetForm(clearMessageToo = true) {
+  $("entryForm").reset();
   $("entryId").value = "";
-  $("incidentDate").value = getToday();
+  $("incidentDate").value = today();
   $("minutesLate").value = "";
-  $("saveEntryButton").textContent = "Save Entry";
+  $("qualifyingStatus").value = "Not calculated";
+  $("saveButton").textContent = "Save Entry";
   $("cancelEditButton").classList.add("hidden");
 
-  if (currentProfile?.role !== "admin") {
-    $("schoolSelect").value = currentProfile?.school_id || "";
-    $("schoolSelect").disabled = true;
-  } else {
-    $("schoolSelect").disabled = false;
+  $("schoolSelect").disabled = false;
+
+  if (currentProfile?.school_id) {
+    $("schoolSelect").value = currentProfile.school_id;
   }
 
-  if (clearMessageToo) clearMessage("entryMessage");
+  if (clearMessageToo) {
+    clearMessage("entryMessage");
+  }
 }
 
-function showView(viewId) {
-  document.querySelectorAll(".view").forEach(view => view.classList.add("hidden"));
-  $(viewId).classList.remove("hidden");
-
-  document.querySelectorAll(".tab").forEach(tab => {
-    tab.classList.toggle("active", tab.dataset.view === viewId);
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach((page) => {
+    page.classList.add("hidden");
   });
 
-  if (viewId === "myEntriesView") renderMyEntries();
-  if (viewId === "adminView") renderAdminDashboard();
+  $(pageId).classList.remove("hidden");
+
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.page === pageId);
+  });
+
+  if (pageId === "myEntriesPage") renderMyEntries();
+  if (pageId === "adminPage") renderAdmin();
 }
 
 function exportMyEntries() {
-  const month = $("myMonthFilter").value;
-  const search = $("mySearchFilter").value.trim().toLowerCase();
-  const rows = myEntries.filter(entry => {
-    const monthMatch = !month || entry.incident_date.startsWith(month);
-    const haystack = [entry.bus_number, entry.route_number, entry.reason, entry.notes, entry.schools?.school_name]
-      .join(" ").toLowerCase();
-    return monthMatch && (!search || haystack.includes(search));
-  });
-
-  downloadEntriesCsv(rows, `my-late-bus-entries-${month || "all"}.csv`, false);
+  downloadEntryCsv(
+    filteredMyEntries(),
+    `my-late-bus-entries-${$("myMonth").value || "all"}.csv`,
+    false
+  );
 }
 
 function exportAdminDetail() {
-  const rows = getFilteredAdminEntries();
-  downloadEntriesCsv(rows, `district-late-bus-detail-${$("adminMonthFilter").value || "all"}.csv`, true);
+  downloadEntryCsv(
+    filteredAdminEntries(),
+    `district-late-bus-detail-${$("adminMonth").value || "all"}.csv`,
+    true
+  );
 }
 
 function exportBillingSummary() {
-  const month = $("adminMonthFilter").value;
-  const rows = adminEntries.filter(entry => !month || entry.incident_date.startsWith(month));
-  const billable = Math.max(0, rows.length - PENALTY_FREE_INCIDENTS);
-  const amount = billable * PENALTY_PER_ADDITIONAL_INCIDENT;
+  const month = $("adminMonth").value;
 
-  const schoolCounts = {};
-  rows.forEach(entry => {
-    const school = entry.schools?.school_name || "Unknown";
-    schoolCounts[school] = (schoolCounts[school] || 0) + 1;
-  });
+  const monthEntries = allEntries.filter(
+    (entry) => !month || entry.incident_date.startsWith(month)
+  );
 
-  const csvRows = [
+  const summary = calculateRouteSummary(monthEntries);
+
+  const rows = [
     ["Transportation Penalty Billing Summary"],
     ["Month", month || "All"],
-    ["Total Late Incidents", rows.length],
-    ["Non-Billable Incidents", Math.min(rows.length, PENALTY_FREE_INCIDENTS)],
-    ["Billable Incidents", billable],
-    ["Penalty Per Billable Incident", PENALTY_PER_ADDITIONAL_INCIDENT],
-    ["Total Amount Due", amount],
+    ["Contract Rule", "More than 10 minutes late; more than two times per calendar month on a route"],
+    ["Penalty Per Additional Qualifying Incident", PENALTY_AMOUNT],
     [],
-    ["School", "Late Incidents"],
-    ...Object.entries(schoolCounts).sort((a,b) => b[1]-a[1])
+    ["Route", "Qualifying Incidents", "Non-Billable", "Billable", "Amount Due"],
+    ...summary.map((route) => [
+      route.route,
+      route.qualifyingIncidents,
+      route.nonBillable,
+      route.billable,
+      route.amount
+    ]),
+    [],
+    ["Total Amount Due", summary.reduce((sum, route) => sum + route.amount, 0)]
   ];
 
-  downloadCsv(csvRows, `transportation-penalty-billing-${month || "all"}.csv`);
+  downloadCsv(
+    rows,
+    `transportation-penalty-billing-${month || "all"}.csv`
+  );
 }
 
-function downloadEntriesCsv(rows, filename, includeUser) {
+function downloadEntryCsv(rows, filename, includeUser) {
   const header = [
-    "Date", "School", "Bus Number", "Route", "Scheduled Arrival", "Actual Arrival",
-    "Minutes Late", "Reason", ...(includeUser ? ["Entered By", "User Email"] : []), "Notes"
+    "Date","School","Bus Number","Route","Scheduled","Actual",
+    "Minutes Late","Counts Toward Penalty","Reason",
+    ...(includeUser ? ["Entered By","User Email"] : []),
+    "Notes"
   ];
 
-  const data = rows.map(entry => [
+  const data = rows.map((entry) => [
     entry.incident_date,
     entry.schools?.school_name || "",
     entry.bus_number,
-    entry.route_number || "",
-    entry.scheduled_time?.slice(0,5) || "",
-    entry.actual_time?.slice(0,5) || "",
+    entry.route_number,
+    entry.scheduled_time?.slice(0, 5) || "",
+    entry.actual_time?.slice(0, 5) || "",
     entry.minutes_late,
+    qualifies(entry) ? "Yes" : "No",
     entry.reason || "",
-    ...(includeUser ? [entry.profiles?.full_name || "", entry.profiles?.email || ""] : []),
+    ...(includeUser
+      ? [
+          entry.entered_by?.full_name || "",
+          entry.entered_by?.email || ""
+        ]
+      : []),
     entry.notes
   ]);
 
@@ -1127,32 +997,45 @@ function downloadEntriesCsv(rows, filename, includeUser) {
 }
 
 function downloadCsv(rows, filename) {
-  const csv = rows.map(row =>
-    row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")
-  ).join("\r\n");
+  const csv = rows
+    .map((row) =>
+      row
+        .map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`)
+        .join(",")
+    )
+    .join("\r\n");
 
-  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob(["\uFEFF" + csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
+
   link.href = url;
   link.download = filename;
+
+  document.body.appendChild(link);
   link.click();
+  link.remove();
+
   URL.revokeObjectURL(url);
 }
 
-function setDefaultDates() {
-  $("incidentDate").value = getToday();
-  $("adminMonthFilter").value = getCurrentMonth();
+function setDefaults() {
+  $("incidentDate").value = today();
+  $("adminMonth").value = currentMonth();
 }
 
-function getToday() {
+function today() {
   const now = new Date();
-  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10);
+  return new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+  ).toISOString().slice(0, 10);
 }
 
-function getCurrentMonth() {
-  return getToday().slice(0, 7);
+function currentMonth() {
+  return today().slice(0, 7);
 }
 
 function formatDate(value) {
@@ -1163,38 +1046,50 @@ function formatDate(value) {
 
 function formatTime(value) {
   if (!value) return "";
-  const [hourText, minute] = value.slice(0,5).split(":");
+
+  const [hourText, minute] = value.slice(0, 5).split(":");
   let hour = Number(hourText);
   const suffix = hour >= 12 ? "PM" : "AM";
+
   hour = hour % 12 || 12;
+
   return `${hour}:${minute} ${suffix}`;
 }
 
-function formatCurrency(value) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+function currency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD"
+  }).format(value);
 }
 
-function emptyToNull(value) {
-  const trimmed = value.trim();
-  return trimmed ? trimmed : null;
+function nullIfBlank(value) {
+  const text = String(value ?? "").trim();
+  return text || null;
+}
+
+function setButton(id, disabled, text) {
+  const button = $(id);
+  if (!button) return;
+
+  button.disabled = disabled;
+  button.textContent = text;
 }
 
 function showMessage(id, text, isError = false) {
   const element = $(id);
+  if (!element) return;
+
   element.textContent = text;
   element.className = `message ${isError ? "error" : "success"}`;
 }
 
 function clearMessage(id) {
   const element = $(id);
+  if (!element) return;
+
   element.textContent = "";
   element.className = "message";
-}
-
-function toggleButton(id, disabled, text) {
-  const button = $(id);
-  button.disabled = disabled;
-  button.textContent = text;
 }
 
 function escapeHtml(value) {
@@ -1205,7 +1100,6 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
-
 </script>
 </body>
 </html>
