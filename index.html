@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transportation Penalty Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="loginPage" class="login-page">
+    <div class="login-card">
+      <div class="brand-mark">BPS</div>
+      <h1>Transportation Penalty Tracker</h1>
+      <p class="subtitle">Late Bus Reporting and Monthly Billing</p>
+
+      <label for="loginEmail">Email</label>
+      <input id="loginEmail" type="email" autocomplete="username" placeholder="name@bridgeportedu.net">
+
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password">
+
+      <button id="loginButton" class="primary full-width">Sign In</button>
+      <p id="loginMessage" class="message"></p>
+    </div>
+  </div>
+
+  <div id="application" class="hidden">
+    <header class="app-header">
+      <div>
+        <h1>Transportation Penalty Tracker</h1>
+        <p id="headerSubtitle">Late Bus Reporting</p>
+      </div>
+      <div class="header-actions">
+        <span id="welcomeUser"></span>
+        <button id="refreshButton" class="secondary">Refresh</button>
+        <button id="logoutButton" class="danger-outline">Logout</button>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-view="entryView">Enter Late Bus</button>
+      <button class="tab" data-view="myEntriesView">My Entries</button>
+      <button id="adminTab" class="tab hidden" data-view="adminView">Admin Dashboard</button>
+    </nav>
+
+    <main class="app-main">
+      <section id="entryView" class="view">
+        <div class="section-heading">
+          <div>
+            <h2>Report a Late Bus</h2>
+            <p>Enter one record for each late arrival.</p>
+          </div>
+        </div>
+
+        <form id="lateBusForm" class="card form-grid">
+          <input id="entryId" type="hidden">
+
+          <div class="field">
+            <label for="incidentDate">Date *</label>
+            <input id="incidentDate" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="schoolSelect">School *</label>
+            <select id="schoolSelect" required></select>
+          </div>
+
+          <div class="field">
+            <label for="busNumber">Bus Number *</label>
+            <input id="busNumber" type="text" maxlength="30" required placeholder="Example: 421">
+          </div>
+
+          <div class="field">
+            <label for="routeNumber">Route / Run</label>
+            <input id="routeNumber" type="text" maxlength="50" placeholder="Optional">
+          </div>
+
+          <div class="field">
+            <label for="scheduledTime">Scheduled Arrival *</label>
+            <input id="scheduledTime" type="time" required>
+          </div>
+
+          <div class="field">
+            <label for="actualTime">Actual Arrival *</label>
+            <input id="actualTime" type="time" required>
+          </div>
+
+          <div class="field">
+            <label for="minutesLate">Minutes Late</label>
+            <input id="minutesLate" type="number" readonly>
+          </div>
+
+          <div class="field">
+            <label for="reasonSelect">Reason</label>
+            <select id="reasonSelect">
+              <option value="">Select a reason</option>
+              <option>Traffic</option>
+              <option>Mechanical issue</option>
+              <option>Driver issue</option>
+              <option>Route delay</option>
+              <option>Weather</option>
+              <option>Unknown</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field field-wide">
+            <label for="notes">Notes *</label>
+            <textarea id="notes" rows="4" required placeholder="Describe the late arrival and any information provided by transportation."></textarea>
+          </div>
+
+          <div class="form-actions field-wide">
+            <button id="saveEntryButton" type="submit" class="primary">Save Entry</button>
+            <button id="cancelEditButton" type="button" class="secondary hidden">Cancel Edit</button>
+          </div>
+
+          <p id="entryMessage" class="message field-wide"></p>
+        </form>
+      </section>
+
+      <section id="myEntriesView" class="view hidden">
+        <div class="section-heading">
+          <div>
+            <h2>My Entries</h2>
+            <p>View, filter, edit, and export every entry you submitted.</p>
+          </div>
+          <button id="exportMyEntriesButton" class="primary">Export My Entries</button>
+        </div>
+
+        <div class="card filter-bar">
+          <div class="field">
+            <label for="myMonthFilter">Month</label>
+            <input id="myMonthFilter" type="month">
+          </div>
+          <div class="field">
+            <label for="mySearchFilter">Search</label>
+            <input id="mySearchFilter" type="search" placeholder="Bus, route, school, or notes">
+          </div>
+          <button id="clearMyFiltersButton" class="secondary filter-button">Clear Filters</button>
+        </div>
+
+        <div class="card table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>School</th>
+                  <th>Bus</th>
+                  <th>Route</th>
+                  <th>Scheduled</th>
+                  <th>Actual</th>
+                  <th>Minutes Late</th>
+                  <th>Reason</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="myEntriesBody"></tbody>
+            </table>
+          </div>
+          <p id="myEntriesEmpty" class="empty-state hidden">No entries match the current filters.</p>
+        </div>
+      </section>
+
+      <section id="adminView" class="view hidden">
+        <div class="section-heading">
+          <div>
+            <h2>Administrator Dashboard</h2>
+            <p>District-wide late bus activity and monthly penalty billing.</p>
+          </div>
+          <div class="button-row">
+            <button id="exportAdminDetailButton" class="secondary">Export Detail</button>
+            <button id="exportBillingButton" class="primary">Export Billing Summary</button>
+          </div>
+        </div>
+
+        <div class="card admin-filters">
+          <div class="field">
+            <label for="adminMonthFilter">Reporting Month</label>
+            <input id="adminMonthFilter" type="month">
+          </div>
+          <div class="field">
+            <label for="adminSchoolFilter">School</label>
+            <select id="adminSchoolFilter"></select>
+          </div>
+          <div class="field">
+            <label for="adminSearchFilter">Search</label>
+            <input id="adminSearchFilter" type="search" placeholder="Bus, route, user, or notes">
+          </div>
+          <button id="clearAdminFiltersButton" class="secondary filter-button">Clear Filters</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="metric-card">
+            <span>Late Incidents</span>
+            <strong id="metricIncidents">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Non-Billable Incidents</span>
+            <strong id="metricFree">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Billable Incidents</span>
+            <strong id="metricBillable">0</strong>
+          </article>
+          <article class="metric-card highlight">
+            <span>Amount to Bill</span>
+            <strong id="metricAmount">$0.00</strong>
+          </article>
+          <article class="metric-card">
+            <span>Schools Reporting</span>
+            <strong id="metricSchools">0 / 38</strong>
+          </article>
+        </div>
+
+        <div class="two-column">
+          <div class="card">
+            <h3>Monthly Billing Calculation</h3>
+            <div class="billing-box">
+              <p>Total late incidents: <strong id="billingTotal">0</strong></p>
+              <p>First two incidents: <strong>No charge</strong></p>
+              <p>Billable incidents: <strong id="billingCount">0</strong></p>
+              <p class="billing-total"><span id="billingEquation">0 × $50</span><strong id="billingAmount">$0.00</strong></p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Late Incidents by School</h3>
+            <div class="table-wrap compact">
+              <table>
+                <thead><tr><th>School</th><th>Incidents</th></tr></thead>
+                <tbody id="schoolSummaryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card table-card">
+          <h3>District Entries</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>School</th>
+                  <th>Bus</th>
+                  <th>Route</th>
+                  <th>Scheduled</th>
+                  <th>Actual</th>
+                  <th>Minutes Late</th>
+                  <th>Reason</th>
+                  <th>Entered By</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminEntriesBody"></tbody>
+            </table>
+          </div>
+          <p id="adminEntriesEmpty" class="empty-state hidden">No entries match the current filters.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
